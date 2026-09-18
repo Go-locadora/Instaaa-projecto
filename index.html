@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Viral Content Hub & Finder</title>
+  
+  <!-- Fontes e Ícones -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@lucide/web@latest"></script>
+
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-card: rgba(18, 24, 38, 0.7);
+      --bg-card-hover: rgba(26, 34, 54, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --accent-color: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 40%);
+      background-attachment: fixed;
+      padding-bottom: 80px;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(9, 13, 22, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 1rem 1.5rem;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+    }
+
+    .badge-count {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* SEARCH SECTION */
+    .search-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      margin-bottom: 2rem;
+    }
+
+    .search-input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 1.2rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 16px 14px 48px;
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      border: none;
+      color: white;
+      padding: 0 24px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    /* TAGS DE NICHO */
+    .niche-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tag-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .tag-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tag-chip:hover, .tag-chip.active {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--accent-color);
+      color: white;
+    }
+
+    /* GRID DE VÍDEOS */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .grid-videos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .video-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+      background: var(--bg-card-hover);
+    }
+
+    .thumb-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9/16;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .video-card:hover .thumb-img {
+      transform: scale(1.03);
+    }
+
+    .badge-viral {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(16, 185, 129, 0.85);
+      backdrop-filter: blur(8px);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-platform {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(8px);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-play-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      cursor: pointer;
+    }
+
+    .video-card:hover .btn-play-overlay {
+      opacity: 1;
+    }
+
+    .play-icon-circle {
+      width: 50px;
+      height: 50px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: black;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-info {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .video-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 0.8rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .metrics-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .metric-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-action.primary {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.3);
+      color: #818cf8;
+    }
+
+    .btn-action.primary:hover {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    /* MODAL DE PLAYER DE VÍDEO */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-container {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 400px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-header {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .video-player-frame {
+      width: 100%;
+      aspect-ratio: 9/16;
+      background: #000;
+    }
+
+    /* FILA / ESTEIRA DE CONTEÚDO */
+    .queue-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .queue-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .queue-thumb {
+      width: 60px;
+      height: 90px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      background: #000;
+    }
+
+    .queue-details {
+      flex: 1;
+    }
+
+    .queue-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .queue-status {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .status-pending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+    .status-ready { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+
+    .caption-box {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      padding: 8px;
+      font-size: 0.85rem;
+      resize: vertical;
+      min-height: 60px;
+      margin-top: 6px;
+    }
+
+    /* TUTORIAL GITHUB */
+    .guide-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .guide-step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-content h4 {
+      margin-bottom: 4px;
+    }
+
+    .step-content p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    code {
+      background: rgba(0,0,0,0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+
+    /* RESPONSIVIDADE E BOTTOM NAV PARA MOBILE */
+    @media (max-width: 768px) {
+      .nav-tabs {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 0;
+        border-top: 1px solid var(--border-color);
+        background: rgba(9, 13, 22, 0.95);
+        backdrop-filter: blur(16px);
+        justify-content: space-around;
+        padding: 8px;
+        z-index: 100;
+      }
+
+      .tab-btn {
+        flex-direction: column;
+        font-size: 0.7rem;
+        gap: 2px;
+        padding: 6px 12px;
+      }
+
+      .search-input-group {
+        flex-direction: column;
+      }
+
+      .btn-primary {
+        padding: 12px;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <div class="logo-icon">
+          <i data-lucide="flame"></i>
+        </div>
+        <span>ViralHub</span>
+      </div>
+
+      <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('finder')">
+          <i data-lucide="compass"></i>
+          <span>Buscador</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('queue')">
+          <i data-lucide="layers"></i>
+          <span>Fila</span>
+          <span class="badge-count" id="queue-count">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('guide')">
+          <i data-lucide="github"></i>
+          <span>Deploy GitHub</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main>
+    <!-- ABA 1: BUSCADOR -->
+    <div id="tab-finder" class="tab-content">
+      <div class="search-card">
+        <div class="search-input-group">
+          <div class="input-wrapper">
+            <i data-lucide="search" class="input-icon"></i>
+            <input type="text" id="niche-input" class="search-input" placeholder="Digite o nicho (ex: Futebol, Finanças, Cortes)..." value="Cortes de Podcast">
+          </div>
+          <button class="btn-primary" onclick="searchViralVideos()">
+            <i data-lucide="sparkles"></i>
+            <span>Buscar Virais</span>
+          </button>
+        </div>
+
+        <div class="niche-tags">
+          <span class="tag-label">Sugestões:</span>
+          <div class="tag-chip active" onclick="selectTag(this, 'Cortes de Podcast')">🎙️ Cortes</div>
+          <div class="tag-chip" onclick="selectTag(this, 'Futebol e Gols')">⚽ Futebol</div>
+          <div class="tag-chip" onclick="selectTag(this, 'Finanças e Investimentos')">💰 Finanças</div>
+          <div class="tag-chip" onclick="selectTag(this, 'Motivação e Sucesso')">🔥 Motivação</div>
+          <div class="tag-chip" onclick="selectTag(this, 'Curiosidades do Mundo')">🧠 Curiosidades</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">
+          <i data-lucide="trending-up" style="color: var(--accent-color);"></i>
+          <span>Vídeos Virais Encontrados</span>
+        </div>
+      </div>
+
+      <div class="grid-videos" id="video-results">
+        <!-- Renderizado via JavaScript -->
+      </div>
+    </div>
+
+    <!-- ABA 2: FILA DE CURADORA -->
+    <div id="tab-queue" class="tab-content" style="display: none;">
+      <div class="section-header">
+        <div class="section-title">
+          <i data-lucide="list-checks" style="color: var(--success);"></i>
+          <span>Minha Fila de Publicação</span>
+        </div>
+        <button class="btn-action" onclick="exportQueueJSON()">
+          <i data-lucide="download"></i>
+          Exportar Lista
+        </button>
+      </div>
+
+      <div class="queue-list" id="queue-results">
+        <!-- Renderizado via JavaScript -->
+      </div>
+    </div>
+
+    <!-- ABA 3: GUIA GITHUB PAGES -->
+    <div id="tab-guide" class="tab-content" style="display: none;">
+      <div class="section-header">
+        <div class="section-title">
+          <i data-lucide="github" style="color: var(--accent-color);"></i>
+          <span>Como Publicar no GitHub Pages Gratuitamente</span>
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Crie um Repositório no GitHub</h4>
+            <p>Acesse o GitHub no seu computador ou no navegador do iPhone, clique em <b>New Repository</b>, dê o nome de <code>viral-hub</code> e marque como <b>Public</b>.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Adicione o Arquivo HTML</h4>
+            <p>Dentro do repositório criado, clique em <b>Add file</b> > <b>Create new file</b>. Dê o nome do arquivo exatamente como <code>index.html</code> e cole este código completo dentro dele. Em seguida, clique em <b>Commit changes</b>.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Ative o GitHub Pages</h4>
+            <p>Vá na aba <b>Settings</b> do repositório, clique em <b>Pages</b> no menu lateral. Em <i>Build and deployment</i>, selecione a Branch <code>main</code> e clique em <b>Save</b>.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Pronto! Acesse pelo iPhone</h4>
+            <p>Em cerca de 2 minutos, seu site estará online no link <code>https://seuu-usuario.github.io/viral-hub</code>. Abra no Safari do iPhone, clique no botão de compartilhar e selecione <b>"Adicionar à Tela de Início"</b> para transformá-lo em um App!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL PLAYER DE VÍDEO -->
+  <div class="modal-overlay" id="video-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <span style="font-weight: 700; font-size: 0.9rem;" id="modal-video-title">Pré-visualização do Vídeo</span>
+        <button class="modal-close" onclick="closeModal()">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="video-player-frame" id="modal-player-body">
+        <!-- Player dinâmico -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Inicialização dos Ícones Lucide
+    lucide.createIcons();
+
+    // BANCO DE DADOS SIMULADO DE VÍDEOS VIRAIS
+    const mockDatabase = {
+      "Cortes de Podcast": [
+        { id: "p1", title: "O segredo da disciplina diária para alcançar qualquer objetivo", views: "1.8M", likes: "240k", duration: "0:45", thumb: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=500&q=80", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+        { id: "p2", title: "Entenda por que a maioria falha nos primeiros 6 meses", views: "950k", likes: "115k", duration: "0:58", thumb: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=500&q=80", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+        { id: "p3", title: "Como reprogramar sua mente para focar no que importa", views: "2.3M", likes: "310k", duration: "0:30", thumb: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&q=80", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+      ],
+      "Futebol e Gols": [
+        { id: "f1", title: "Os 5 dribles mais humilhantes da temporada europeia", views: "3.5M", likes: "480k", duration: "0:40", thumb: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500&q=80", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+        { id: "f2", title: "Chute inacreditável do meio do campo no último segundo", views: "1.2M", likes: "190k", duration: "0:25", thumb: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=500&q=80", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+      ],
+      "Finanças e Investimentos": [
+        { id: "m1", title: "Regra dos 50-30-20 para organizar o seu salário hoje", views: "1.1M", likes: "140k", duration: "0:50", thumb: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&q=80", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+      ]
+    };
+
+    let queueList = JSON.parse(localStorage.getItem('viral_queue')) || [];
+
+    // NAVEGAÇÃO POR ABAS
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+
+      document.getElementById(`tab-${tabId}`).style.display = 'block';
+      event.currentTarget.classList.add('active');
+
+      if(tabId === 'queue') renderQueue();
+    }
+
+    // SELEÇÃO DE TAGS
+    function selectTag(element, tagValue) {
+      document.querySelectorAll('.tag-chip').forEach(chip => chip.classList.remove('active'));
+      element.classList.add('active');
+      document.getElementById('niche-input').value = tagValue;
+      searchViralVideos();
+    }
+
+    // BUSCAR VÍDEOS
+    function searchViralVideos() {
+      const niche = document.getElementById('niche-input').value.trim();
+      const container = document.getElementById('video-results');
+      container.innerHTML = '';
+
+      let videos = mockDatabase[niche] || [
+        { id: "gen1", title: `Vídeo Viral em Alta sobre ${niche} #1`, views: "1.5M", likes: "200k", duration: "0:45", thumb: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&q=80", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+        { id: "gen2", title: `Momento épico e surpreendente em ${niche}`, views: "890k", likes: "98k", duration: "0:35", thumb: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=500&q=80", embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+      ];
+
+      videos.forEach(video => {
+        const isQueued = queueList.some(item => item.id === video.id);
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.innerHTML = `
+          <div class="thumb-wrapper">
+            <img src="${video.thumb}" class="thumb-img" alt="Thumbnail">
+            <div class="badge-viral">
+              <i data-lucide="zap" style="width:12px;"></i> VIRAL
+            </div>
+            <div class="badge-platform">
+              <i data-lucide="video" style="width:14px;"></i>
+            </div>
+            <div class="btn-play-overlay" onclick="openModal('${video.title}', '${video.embedUrl}')">
+              <div class="play-icon-circle">
+                <i data-lucide="play" style="fill:black; width:20px; margin-left:2px;"></i>
+              </div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="video-title">${video.title}</div>
+            <div class="metrics-row">
+              <div class="metric-item"><i data-lucide="eye" style="width:14px;"></i> ${video.views}</div>
+              <div class="metric-item"><i data-lucide="heart" style="width:14px;"></i> ${video.likes}</div>
+              <div class="metric-item"><i data-lucide="clock" style="width:14px;"></i> ${video.duration}</div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-action" onclick="copyVideoLink('${video.embedUrl}')">
+                <i data-lucide="copy" style="width:14px;"></i> Link
+              </button>
+              <button class="btn-action primary" onclick="addToQueue('${video.id}', '${video.title}', '${video.thumb}', '${niche}')">
+                <i data-lucide="${isQueued ? 'check' : 'plus'}" style="width:14px;"></i> ${isQueued ? 'Na Fila' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // MODAL PLAYER
+    function openModal(title, url) {
+      document.getElementById('modal-video-title').innerText = title;
+      document.getElementById('modal-player-body').innerHTML = `
+        <iframe src="${url}?autoplay=1" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      `;
+      document.getElementById('video-modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('video-modal').classList.remove('active');
+      document.getElementById('modal-player-body').innerHTML = '';
+    }
+
+    // COPIAR LINK
+    function copyVideoLink(url) {
+      navigator.clipboard.writeText(url);
+      alert('Link do vídeo copiado para a área de transferência!');
+    }
+
+    // ADICIONAR À FILA
+    function addToQueue(id, title, thumb, niche) {
+      if (!queueList.some(item => item.id === id)) {
+        const defaultCaption = `Confira esse vídeo incrível sobre ${niche}! 🔥👇\n\n#${niche.replace(/\s+/g, '')} #viral #reels #facebook`;
+        queueList.push({ id, title, thumb, niche, caption: defaultCaption, status: 'Pendente' });
+        saveQueue();
+        updateQueueBadge();
+        searchViralVideos();
+      }
+    }
+
+    // ATUALIZAR CONTADOR
+    function updateQueueBadge() {
+      document.getElementById('queue-count').innerText = queueList.length;
+    }
+
+    function saveQueue() {
+      localStorage.setItem('viral_queue', JSON.stringify(queueList));
+    }
+
+    // RENDERIZAR FILA
+    function renderQueue() {
+      const container = document.getElementById('queue-results');
+      container.innerHTML = '';
+
+      if (queueList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 3rem 0;">Sua fila está vazia. Adicione vídeos na aba 'Buscador'.</div>`;
+        return;
+      }
+
+      queueList.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'queue-item';
+        div.innerHTML = `
+          <img src="${item.thumb}" class="queue-thumb" alt="Thumb">
+          <div class="queue-details">
+            <div class="queue-title">${item.title}</div>
+            <span class="queue-status status-pending">${item.status}</span>
+            <textarea class="caption-box" onchange="updateCaption(${index}, this.value)" placeholder="Digite a legenda do post...">${item.caption}</textarea>
+          </div>
+          <button class="btn-action" style="color: var(--danger);" onclick="removeFromQueue(${index})">
+            <i data-lucide="trash-2" style="width:16px;"></i>
+          </button>
+        `;
+        container.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    function updateCaption(index, text) {
+      queueList[index].caption = text;
+      saveQueue();
+    }
+
+    function removeFromQueue(index) {
+      queueList.splice(index, 1);
+      saveQueue();
+      updateQueueBadge();
+      renderQueue();
+    }
+
+    function exportQueueJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(queueList, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "fila_conteudo_viral.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // Inicialização
+    searchViralVideos();
+    updateQueueBadge();
+  </script>
+</body>
+</html>
